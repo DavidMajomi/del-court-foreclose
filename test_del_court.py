@@ -18,10 +18,9 @@ def search_case(first_name, last_name):
 
     # Check if the request was successful
     if response.status_code == 200:
-        print("Form submitted successfully!")
-        print("Response Content:")
-        # print(response.text)
-        print(response.headers)
+        # print("Form submitted successfully!")
+        # print("Response Content:")
+        pass
     else:
         print(f"Failed to submit the form. Status code: {response.status_code}")
         
