@@ -1,9 +1,56 @@
+import time
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 
 
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_cpty.cp_personcase_setup_idx
 
+
+
+def store_non_closed_cases(table: pd.DataFrame, file_name: str):
+    
+    table.to_excel(file_name)
+
+
+    
+    
+    
+def get_names_from_file_containing_cases():
+    
+    columns = ["Owner Last Name", "Owner First Name"]
+    
+    table = pd.read_excel("Pre-Foreclosures.xlsx", usecols=columns)
+    
+    return table
+
+
+def get_new_data_from_website(table: pd.DataFrame):
+    
+    all_cases = []
+    
+    for i, row in table.iterrows():
+        first_name = row["Owner First Name"]
+        last_name = row["Owner Last Name"]
+        
+        # time.sleep(0.05)
+        
+        cases = search_case(first_name, last_name)
+        
+        print(f"Iteration: {i}")
+        
+        for case in cases:
+            
+            if case["case_status"] != "CLOSED-CLOSED":
+                
+                all_cases.append(case)
+        
+    df = pd.DataFrame.from_dict(all_cases)
+        
+        
+    return df
+        
+    
 
 def search_case(first_name, last_name):
     # Define the URL to post the data to
@@ -90,8 +137,6 @@ def split_address(value):
     return address, case
     
     
-    
-        
 def display_non_closed_cases(cases):
         
     for case in cases:
@@ -108,8 +153,6 @@ def display_non_closed_cases(cases):
             print(f'Case Status: {case["case_status"]}')
             
             print("\n")    
-            
-            
             
             
 def display_all_cases(cases)                :
@@ -131,10 +174,19 @@ def display_all_cases(cases)                :
         
         
         
-cases = search_case("Linda", "Grimes")
+# cases = search_case("Linda", "Grimes")
 
 
-display_non_closed_cases(cases)
+# display_non_closed_cases(cases)
+
+
+table = get_names_from_file_containing_cases()
+
+# print(table)
+
+new_data_from_website = get_new_data_from_website(table)
+
+store_non_closed_cases(new_data_from_website, "new_data.xlsx")
 
 # display_all_cases(cases)/
 
