@@ -116,6 +116,7 @@ def display_all_cases(cases)                :
 def find_abnormal_size_of_case_numbers(table):
     size = 11
     
+    count = 0
     for i, row in table.iterrows():
         case_number = row["Case Number"]
         
@@ -124,12 +125,37 @@ def find_abnormal_size_of_case_numbers(table):
         if (type(case_number) == str):
             
             if (len(case_number) != size):
-                print(len(case_number))
+                
+                print(f"Len: {len(case_number)}, Value: {case_number}")
+                count += 1
+                
             
         else:
             print(case_number)
-                
+            
+            count += 1
+            
+        
+        
+    print(f"Total issues: {count}")
+            
 
+def clean_case_numbers(table):
+    size = 11
+    
+    for i, row in table.iterrows():
+        case_number = row["Case Number"]
+
+        if (type(case_number) == str):
+            
+            if (len(case_number) != size):
+                row["Case Number"] = (row["Case Number"]).replace(' ', '')
+                row["Case Number"] = (row["Case Number"]).replace('\n', '')
+            
+            
+            
+            
+    
 def store_non_closed_cases(table: pd.DataFrame, file_name: str):
     
     table.to_excel(file_name)
@@ -148,6 +174,7 @@ def get_new_data_from_website(table: pd.DataFrame):
     
     all_cases = []
     
+    number_of_nan = 0
     for i, row in table.iterrows():
         first_name = row["Owner First Name"]
         last_name = row["Owner Last Name"]
@@ -156,18 +183,27 @@ def get_new_data_from_website(table: pd.DataFrame):
         
         if(type(row["Case Number"]) == str):
             
+            
             cases = search_case_matching_case_number(first_name, last_name, row["Case Number"])
+            
+            
+        else:
+            number_of_nan = number_of_nan + 1
+            
+            print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
         
         print(f"Iteration: {i}")
         
         for case in cases:
             
-            if case["case_status"] != "CLOSED-CLOSED":
+            # if case["case_status"] != "CLOSED-CLOSED":
                 
-                all_cases.append(case)
+            all_cases.append(case)
         
     df = pd.DataFrame.from_dict(all_cases)
-        
+    print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
+    
+    
         
     return df
         
@@ -182,7 +218,6 @@ def search_case_matching_case_number(first_name, last_name, case_number):
 
     # Perform the POST request
     response = requests.post(url)
-    # response = requests.post(url, headers=headers, cookies=cookies, data=data)
 
     # Check if the request was successful
     if response.status_code == 200:
@@ -243,6 +278,10 @@ def search_case_matching_case_number(first_name, last_name, case_number):
                     print(f"Retrieved case No: {case_data['Case_no']}")
                     print(f"Initial Case No: {case_number} \n \n")
                     cases.append(case_data)
+                    
+                else:
+                    pass
+                    # print("Not matched with case no from file")
             
                 # print("\n")
         
@@ -310,14 +349,25 @@ def display_all_cases(cases):
 
 
 # df = get_names_from_file_containing_cases()
-# find_unique_size_of_case_numbers(df)
+# find_abnormal_size_of_case_numbers(df)
+# clean_case_numbers(df)
+# find_abnormal_size_of_case_numbers(df)
+
+
+
 
 
 table = get_names_from_file_containing_cases()
+table.drop_duplicates()
+clean_case_numbers(table)
 
 print(table)
 
 new_data_from_website = get_new_data_from_website(table)
+
+new_data_from_website.drop_duplicates()
+
+print(table)
 print(new_data_from_website)
 
 store_non_closed_cases(new_data_from_website, "new_data.xlsx")
