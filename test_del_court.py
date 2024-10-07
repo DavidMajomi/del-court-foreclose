@@ -8,6 +8,70 @@ from bs4 import BeautifulSoup
 
 
 
+
+
+def search_case_data_using_case_id(case_id):
+    
+    get_general_info = True
+    get_core_data = False
+    get_entry_data = True
+    
+    entries_delim_list = ['Filing Date', 'Description', 'Name', 'Monetary']
+    core_data_delim_list = ['Seq #', 'Assoc', 'Party End Date', 'Type', 'ID', 'Name']
+    
+    general_info_list = []
+    core_data_list = []
+    entry_data_list = []
+    
+    
+    # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_doct.cp_dktrpt_docket_report?backto=D&case_id=N23L-10-013&begin_date=&end_date=
+    
+    url = f"https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_doct.cp_dktrpt_docket_report?backto=D&case_id={case_id}&begin_date=&end_date="
+
+    response = requests.post(url)
+
+    if response.status_code == 200:
+        print("Form submitted successfully!")
+        # print("Response Content:")
+        # pass
+    else:
+        print(f"Failed to submit the form. Status code: {response.status_code}")
+        
+        
+    soup=BeautifulSoup(response.content,'lxml')
+    
+    # print(response.content)
+    cases = []
+    entries = []
+    
+    count = 0
+    for item in soup.select('tr'):
+        if count > 1:
+            # print(item, "\n\n")
+            
+            list_of_vals = []
+            
+            for val in item.children:
+                str_val = val.get_text()
+                
+                if (not (str_val == "\n")):
+                    list_of_vals.append(val.get_text())
+                    
+                    
+            # if get_general_info == True:
+                
+            if(list_of_vals[0] == "Entry:"):
+                entries.append(list_of_vals)
+            else:
+                pass
+                    
+            print(list_of_vals)
+        
+        count += 1
+        
+    print(entries)
+        
+        
 def search_case(first_name, last_name):
     # Define the URL to post the data to
     
@@ -153,9 +217,6 @@ def clean_case_numbers(table):
                 row["Case Number"] = (row["Case Number"]).replace('\n', '')
             
             
-            
-            
-    
 def store_non_closed_cases(table: pd.DataFrame, file_name: str):
     
     table.to_excel(file_name)
@@ -338,7 +399,6 @@ def display_non_closed_cases(cases):
             display_case_details(case)
             
             
-            
 def display_all_cases(cases):
     
     for case in cases:
@@ -351,30 +411,33 @@ def display_all_cases(cases):
 # display_non_closed_cases(cases)
 
 
-df = get_names_from_file_containing_cases()
-find_abnormal_size_of_case_numbers(df)
-clean_case_numbers(df)
-find_abnormal_size_of_case_numbers(df)
+# df = get_names_from_file_containing_cases()
+# find_abnormal_size_of_case_numbers(df)
+# clean_case_numbers(df)
+# find_abnormal_size_of_case_numbers(df)
 
-
+##### Search using case id
+search_case_data_using_case_id("N23L-10-013")
 
 
 
 # table = get_names_from_file_containing_cases()
-# table.drop_duplicates()
 # clean_case_numbers(table)
 
 # print(table)
 
 # new_data_from_website = get_new_data_from_website(table)
 
-# new_data_from_website.drop_duplicates()
-
 # print(table)
 # print(new_data_from_website)
 
 # store_non_closed_cases(new_data_from_website, "new_data.xlsx")
 
-# display_all_cases(cases)/
+
+
+
+
+
+# display_all_cases(cases)
 
 
