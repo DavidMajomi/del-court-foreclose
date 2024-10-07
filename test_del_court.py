@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
-
+# https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_doct.cp_dktrpt_setup_idx New main
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_cpty.cp_personcase_setup_idx
 
 
@@ -284,6 +284,9 @@ def search_case_matching_case_number(first_name, last_name, case_number):
                     # print("Not matched with case no from file")
             
                 # print("\n")
+                
+                
+                case_data = {}
         
         count += 1
         
@@ -348,29 +351,29 @@ def display_all_cases(cases):
 # display_non_closed_cases(cases)
 
 
-# df = get_names_from_file_containing_cases()
-# find_abnormal_size_of_case_numbers(df)
-# clean_case_numbers(df)
-# find_abnormal_size_of_case_numbers(df)
+df = get_names_from_file_containing_cases()
+find_abnormal_size_of_case_numbers(df)
+clean_case_numbers(df)
+find_abnormal_size_of_case_numbers(df)
 
 
 
 
 
-table = get_names_from_file_containing_cases()
-table.drop_duplicates()
-clean_case_numbers(table)
+# table = get_names_from_file_containing_cases()
+# table.drop_duplicates()
+# clean_case_numbers(table)
 
-print(table)
+# print(table)
 
-new_data_from_website = get_new_data_from_website(table)
+# new_data_from_website = get_new_data_from_website(table)
 
-new_data_from_website.drop_duplicates()
+# new_data_from_website.drop_duplicates()
 
-print(table)
-print(new_data_from_website)
+# print(table)
+# print(new_data_from_website)
 
-store_non_closed_cases(new_data_from_website, "new_data.xlsx")
+# store_non_closed_cases(new_data_from_website, "new_data.xlsx")
 
 # display_all_cases(cases)/
 
