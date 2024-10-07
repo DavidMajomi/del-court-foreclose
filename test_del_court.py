@@ -7,9 +7,6 @@ from bs4 import BeautifulSoup
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_cpty.cp_personcase_setup_idx
 
 
-
-
-
 def search_case_data_using_case_id(case_id):
     
     get_general_info = True
@@ -41,7 +38,6 @@ def search_case_data_using_case_id(case_id):
     soup=BeautifulSoup(response.content,'lxml')
     
     # print(response.content)
-    cases = []
     entries = []
     
     count = 0
@@ -58,8 +54,24 @@ def search_case_data_using_case_id(case_id):
                     list_of_vals.append(val.get_text())
                     
                     
-            # if get_general_info == True:
+            if list_of_vals == core_data_delim_list:
+                get_general_info = False
+                get_entry_data = False
+                get_core_data = True
+            elif list_of_vals == entries_delim_list:
+                get_general_info = False
+                get_core_data = False
+                get_entry_data = True
+                    
+                    
+            if get_general_info == True:
+                general_info_list.append(list_of_vals)
+            elif get_core_data == True:
+                core_data_list.append(list_of_vals)
+            elif get_entry_data == True:
+                entry_data_list.append(list_of_vals)
                 
+
             if(list_of_vals[0] == "Entry:"):
                 entries.append(list_of_vals)
             else:
@@ -69,7 +81,13 @@ def search_case_data_using_case_id(case_id):
         
         count += 1
         
-    print(entries)
+    df_general = pd.DataFrame(general_info_list)
+    df_core = pd.DataFrame(core_data_list)
+    df_entries = pd.DataFrame(entry_data_list)
+    
+    print(df_general)
+    print(df_core)
+    print(df_entries)
         
         
 def search_case(first_name, last_name):
