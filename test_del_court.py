@@ -77,7 +77,7 @@ def search_case_data_using_case_id(case_id):
             else:
                 pass
                     
-            print(list_of_vals)
+            # print(list_of_vals)
         
         count += 1
         
@@ -85,9 +85,7 @@ def search_case_data_using_case_id(case_id):
     df_core = pd.DataFrame(core_data_list)
     df_entries = pd.DataFrame(entry_data_list)
     
-    print(df_general)
-    print(df_core)
-    print(df_entries)
+    return df_general, df_core, df_entries
         
         
 def search_case(first_name, last_name):
@@ -287,7 +285,6 @@ def get_new_data_from_website(table: pd.DataFrame):
     return df
         
     
-
 def search_case_matching_case_number(first_name, last_name, case_number):
     # Define the URL to post the data to
     
@@ -435,7 +432,11 @@ def display_all_cases(cases):
 # find_abnormal_size_of_case_numbers(df)
 
 ##### Search using case id
-search_case_data_using_case_id("N23L-10-013")
+df_general, df_core, df_entries = search_case_data_using_case_id("N23L-10-013")
+
+print(df_general)
+print(df_core)
+print(df_entries)
 
 
 
