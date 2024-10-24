@@ -458,18 +458,54 @@ df_general, df_core, df_entries = search_case_data_using_case_id("N23L-10-013")
 
 print(df_general)
 print(df_core)
-print(df_entries)
 
 list_of_relevant_entries = []
-
 num_rows_entries, num_cols_entries = df_entries.shape
 for index,row in df_entries.iterrows():
    if(index >= num_rows_entries - 3):
-       list_of_relevant_entries.append( row[1])
+       list_of_relevant_entries.append(row[1])
        
        
+str_relevant_entries = ""
+
+for val in list_of_relevant_entries:
+    str_relevant_entries = str_relevant_entries + "/" + str(val)
+    
+print(str_relevant_entries)
        
-print(list_of_relevant_entries)
+       
+list_of_plaintiffs = []
+list_of_plaintiff_attorney = []
+list_of_judges = []
+list_of_sheriffs = []
+list_of_program_administrators = []       
+list_of_plaintiff_attorney = []
+
+print(df_core[1][2])
+status = (df_general[2][4])
+print(len(df_general[0]))
+
+
+# for i in range(len(df_general)):
+#     if i > 0:
+#         for j in len(df_general[0]):
+            
+        
+    
+    
+    
+    
+    
+# for index,row in df_core.iterrows():  
+#     if index == 0:
+        # print(row[1])     
+        # print(row[])
+
+
+
+
+# final_case_data
+
 # table = get_names_from_file_containing_cases()
 # clean_case_numbers(table)
 
