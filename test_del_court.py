@@ -3,6 +3,28 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
+
+
+# Latest three entries
+# Plaintiff (Mrtgage Company)
+# Judge
+# Attorney
+
+# Find people with foreclosures
+
+
+# Evan Ward
+
+# 1:15 PM
+
+# Plaintiff (Mortgage Company) Attorney Judge Below: Last 3 Docket entries, including the date, the name of the entry and the Entry
+
+
+# Entry Info
+# Name, Date, and entry
+
+
+
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_doct.cp_dktrpt_setup_idx New main
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_cpty.cp_personcase_setup_idx
 
@@ -438,8 +460,16 @@ print(df_general)
 print(df_core)
 print(df_entries)
 
+list_of_relevant_entries = []
 
-
+num_rows_entries, num_cols_entries = df_entries.shape
+for index,row in df_entries.iterrows():
+   if(index >= num_rows_entries - 3):
+       list_of_relevant_entries.append( row[1])
+       
+       
+       
+print(list_of_relevant_entries)
 # table = get_names_from_file_containing_cases()
 # clean_case_numbers(table)
 
