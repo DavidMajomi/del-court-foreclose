@@ -486,9 +486,24 @@ status = (df_general[2][4])
 print(len(df_general[0]))
 
 
-# for i in range(len(df_general)):
-#     if i > 0:
-#         for j in len(df_general[0]):
+for index, row in df_core.iterrows():
+    if index > 0:
+        type_val = row[3]
+        name = row[5]
+        if type_val == "PLAINTIFF":
+            list_of_plaintiffs.append(row[5])
+            
+        elif type_val == "ATTORNEY FOR PLAINTIFF":
+            list_of_plaintiff_attorney.append(name)
+            
+        elif type_val == "JUDGE":
+            list_of_judges.append(name)
+           
+           
+           
+print(list_of_plaintiffs)  
+print(list_of_plaintiff_attorney)              
+print(list_of_judges)
             
         
     
