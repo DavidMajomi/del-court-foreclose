@@ -503,11 +503,11 @@ def format_case_data_from_web(case_no, df_general, df_core, df_entries):
             elif type_val == "JUDGE":
                 list_of_judges.append(name)
                 
-            elif type_val == "SHERIFF":
-                list_of_sheriffs.append(name)
+            # elif type_val == "SHERIFF":
+            #     list_of_sheriffs.append(name)
                 
-            elif type_val == "PROGRAM ADMINISTRATOR":
-                list_of_program_administrators.append(name)
+            # elif type_val == "PROGRAM ADMINISTRATOR":
+            #     list_of_program_administrators.append(name)
                 
                 
                 
@@ -516,8 +516,9 @@ def format_case_data_from_web(case_no, df_general, df_core, df_entries):
     "case_status" : status,
     "latest_entries" : (list_of_relevant_entries),
     "plaintiffs" : (list_of_plaintiffs),
-    "Sheriffs" : (list_of_sheriffs),
-    "program_admin" : (list_of_program_administrators)
+    # "Sheriffs" : (list_of_sheriffs),
+    "plaintiffs_attorney" : list_of_plaintiff_attorney,
+    # "program_admin" : (list_of_program_administrators)
     }         
 
         
