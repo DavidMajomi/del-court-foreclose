@@ -29,6 +29,16 @@ from bs4 import BeautifulSoup
 # https://courtconnect.courts.delaware.gov/cc/cconnect/ck_public_qry_cpty.cp_personcase_setup_idx
 
 
+def conv_to_string(list_val):
+    conv_str = ""
+    
+    for i in list_val:
+        conv_str = conv_str + "/" + str(i) 
+        
+        
+    return conv_str
+    
+    
 def search_case_data_using_case_id(case_id):
     
     get_general_info = True
@@ -53,61 +63,67 @@ def search_case_data_using_case_id(case_id):
         print("Form submitted successfully!")
         # print("Response Content:")
         # pass
+        
+            
+        soup=BeautifulSoup(response.content,'lxml')
+
+        # print(response.content)
+        entries = []
+
+        count = 0
+        for item in soup.select('tr'):
+            if count > 1:
+                # print(item, "\n\n")
+                
+                list_of_vals = []
+                
+                for val in item.children:
+                    str_val = val.get_text()
+                    
+                    if (not (str_val == "\n")):
+                        list_of_vals.append(val.get_text())
+                        
+                        
+                if list_of_vals == core_data_delim_list:
+                    get_general_info = False
+                    get_entry_data = False
+                    get_core_data = True
+                elif list_of_vals == entries_delim_list:
+                    get_general_info = False
+                    get_core_data = False
+                    get_entry_data = True
+                        
+                        
+                if get_general_info == True:
+                    general_info_list.append(list_of_vals)
+                elif get_core_data == True:
+                    core_data_list.append(list_of_vals)
+                elif get_entry_data == True:
+                    entry_data_list.append(list_of_vals)
+                    
+
+                if(list_of_vals[0] == "Entry:"):
+                    entries.append(list_of_vals)
+                else:
+                    pass
+                        
+                # print(list_of_vals)
+            
+            count += 1
+            
+        df_general = pd.DataFrame(general_info_list)
+        df_core = pd.DataFrame(core_data_list)
+        df_entries = pd.DataFrame(entry_data_list)
+
+        return df_general, df_core, df_entries, False
+
     else:
         print(f"Failed to submit the form. Status code: {response.status_code}")
+        print(f"Case Id: {case_id}")
         
+        return None, None, None, True
         
-    soup=BeautifulSoup(response.content,'lxml')
     
-    # print(response.content)
-    entries = []
-    
-    count = 0
-    for item in soup.select('tr'):
-        if count > 1:
-            # print(item, "\n\n")
-            
-            list_of_vals = []
-            
-            for val in item.children:
-                str_val = val.get_text()
-                
-                if (not (str_val == "\n")):
-                    list_of_vals.append(val.get_text())
-                    
-                    
-            if list_of_vals == core_data_delim_list:
-                get_general_info = False
-                get_entry_data = False
-                get_core_data = True
-            elif list_of_vals == entries_delim_list:
-                get_general_info = False
-                get_core_data = False
-                get_entry_data = True
-                    
-                    
-            if get_general_info == True:
-                general_info_list.append(list_of_vals)
-            elif get_core_data == True:
-                core_data_list.append(list_of_vals)
-            elif get_entry_data == True:
-                entry_data_list.append(list_of_vals)
-                
-
-            if(list_of_vals[0] == "Entry:"):
-                entries.append(list_of_vals)
-            else:
-                pass
-                    
-            # print(list_of_vals)
-        
-        count += 1
-        
-    df_general = pd.DataFrame(general_info_list)
-    df_core = pd.DataFrame(core_data_list)
-    df_entries = pd.DataFrame(entry_data_list)
-    
-    return df_general, df_core, df_entries
         
         
 def search_case(first_name, last_name):
@@ -443,86 +459,140 @@ def display_all_cases(cases):
         
         
         
+        
+def format_case_data_from_web(case_no, df_general, df_core, df_entries):
+    # print(df_general)
+    # print(df_core)
+
+    list_of_relevant_entries = []
+    num_rows_entries, num_cols_entries = df_entries.shape
+    for index,row in df_entries.iterrows():
+        if(index >= num_rows_entries - 3):
+            list_of_relevant_entries.append(row[1])
+            
+            
+    str_relevant_entries = ""
+
+    for val in list_of_relevant_entries:
+        str_relevant_entries = str_relevant_entries + "/" + str(val)
+        
+    # print(str_relevant_entries)
+        
+        
+    list_of_plaintiffs = []
+    list_of_plaintiff_attorney = []
+    list_of_judges = []
+    list_of_sheriffs = []
+    list_of_program_administrators = []       
+    list_of_plaintiff_attorney = []
+
+    # print(df_core[1][2])
+    status = (df_general[2][4])
+    # print(len(df_general[0]))
+    
+    for index, row in df_core.iterrows():
+        if index > 0:
+            type_val = row[3]
+            name = row[5]
+            if type_val == "PLAINTIFF":
+                list_of_plaintiffs.append(row[5])
+                
+            elif type_val == "ATTORNEY FOR PLAINTIFF":
+                list_of_plaintiff_attorney.append(name)
+                
+            elif type_val == "JUDGE":
+                list_of_judges.append(name)
+                
+            elif type_val == "SHERIFF":
+                list_of_sheriffs.append(name)
+                
+            elif type_val == "PROGRAM ADMINISTRATOR":
+                list_of_program_administrators.append(name)
+                
+                
+                
+    gathered_data = {
+    "case_no" : case_no,
+    "case_status" : status,
+    "latest_entries" : (list_of_relevant_entries),
+    "plaintiffs" : (list_of_plaintiffs),
+    "Sheriffs" : (list_of_sheriffs),
+    "program_admin" : (list_of_program_administrators)
+    }         
+
+        
+    return (gathered_data)
+    
+    
+def get_new_web_case_data(table: pd.DataFrame):
+    
+    all_cases = []
+    num_fail = 0
+    
+    number_of_nan = 0
+    list_of_gathered_data = []
+    for i, row in table.iterrows():
+        # time.sleep(0.5)
+        # time.sleep(0.05)
+        
+        if(type(row["Case Number"]) == str):
+            df_general, df_core, df_entries, fail = search_case_data_using_case_id(row["Case Number"])
+            
+            if fail == False:
+                
+
+                gathered_data = format_case_data_from_web(row["Case Number"], df_general, df_core, df_entries)
+
+
+
+                list_of_gathered_data.append(gathered_data)
+            else:
+                num_fail = num_fail + 1
+
+
+
+            
+        else:
+            number_of_nan = number_of_nan + 1
+            
+            print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
+        
+        print(f"Iteration: {i}")
+        
+        
+    df = pd.DataFrame(list_of_gathered_data)    
+    print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
+    print(f"Num Fail: {num_fail}")
+    
+    
+        
+    return df
+
+
+
+
 # cases = search_case_matching_case_number("Linda", "Grimes", "N23L-10-013")
 
 # display_non_closed_cases(cases)
 
 
-# df = get_names_from_file_containing_cases()
-# find_abnormal_size_of_case_numbers(df)
-# clean_case_numbers(df)
-# find_abnormal_size_of_case_numbers(df)
+df = get_names_from_file_containing_cases()
+find_abnormal_size_of_case_numbers(df)
+clean_case_numbers(df)
+find_abnormal_size_of_case_numbers(df)
 
-##### Search using case id
-df_general, df_core, df_entries = search_case_data_using_case_id("N23L-10-013")
-
-print(df_general)
-print(df_core)
-
-list_of_relevant_entries = []
-num_rows_entries, num_cols_entries = df_entries.shape
-for index,row in df_entries.iterrows():
-   if(index >= num_rows_entries - 3):
-       list_of_relevant_entries.append(row[1])
-       
-       
-str_relevant_entries = ""
-
-for val in list_of_relevant_entries:
-    str_relevant_entries = str_relevant_entries + "/" + str(val)
-    
-print(str_relevant_entries)
-       
-       
-list_of_plaintiffs = []
-list_of_plaintiff_attorney = []
-list_of_judges = []
-list_of_sheriffs = []
-list_of_program_administrators = []       
-list_of_plaintiff_attorney = []
-
-print(df_core[1][2])
-status = (df_general[2][4])
-print(len(df_general[0]))
-
-
-for index, row in df_core.iterrows():
-    if index > 0:
-        type_val = row[3]
-        name = row[5]
-        if type_val == "PLAINTIFF":
-            list_of_plaintiffs.append(row[5])
-            
-        elif type_val == "ATTORNEY FOR PLAINTIFF":
-            list_of_plaintiff_attorney.append(name)
-            
-        elif type_val == "JUDGE":
-            list_of_judges.append(name)
-           
-           
-           
-print(list_of_plaintiffs)  
-print(list_of_plaintiff_attorney)              
-print(list_of_judges)
-            
-        
-    
-    
-    
-    
-    
-# for index,row in df_core.iterrows():  
-#     if index == 0:
-        # print(row[1])     
-        # print(row[])
+df = get_new_web_case_data(df)
+print(df)
+store_non_closed_cases(df, "test.xlsx")
 
 
 
+# ##### Search using case id
+# case_id = "N23L-10-013"
+# df_general, df_core, df_entries = search_case_data_using_case_id(case_id)
 
-# final_case_data
+# print(df_general
 
-# table = get_names_from_file_containing_cases()
-# clean_case_numbers(table)
 
 # print(table)
 
@@ -532,9 +602,6 @@ print(list_of_judges)
 # print(new_data_from_website)
 
 # store_non_closed_cases(new_data_from_website, "new_data.xlsx")
-
-
-
 
 
 
