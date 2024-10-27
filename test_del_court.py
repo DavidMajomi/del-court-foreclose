@@ -33,7 +33,7 @@ def conv_to_string(list_val):
     conv_str = ""
     
     for i in list_val:
-        conv_str = conv_str + "/" + str(i) 
+        conv_str = conv_str + " \n" + str(i) 
         
         
     return conv_str
@@ -122,8 +122,6 @@ def search_case_data_using_case_id(case_id):
         print(f"Case Id: {case_id}")
         
         return None, None, None, True
-        
-    
         
         
 def search_case(first_name, last_name):
@@ -458,8 +456,6 @@ def display_all_cases(cases):
         display_case_details(case)
         
         
-        
-        
 def format_case_data_from_web(case_no, df_general, df_core, df_entries):
     # print(df_general)
     # print(df_core)
@@ -512,13 +508,13 @@ def format_case_data_from_web(case_no, df_general, df_core, df_entries):
                 
                 
     gathered_data = {
-    "case_no" : case_no,
-    "case_status" : status,
-    "latest_entries" : (list_of_relevant_entries),
-    "plaintiffs" : (list_of_plaintiffs),
-    # "Sheriffs" : (list_of_sheriffs),
-    "plaintiffs_attorney" : list_of_plaintiff_attorney,
-    # "program_admin" : (list_of_program_administrators)
+        "case_no" : case_no,
+        "case_status" : status,
+        "plaintiffs" : conv_to_string(list_of_plaintiffs),
+        # "Sheriffs" : (list_of_sheriffs),
+        "plaintiffs_attorney" : list_of_plaintiff_attorney,
+        "latest_entries" : conv_to_string(list_of_relevant_entries),
+        # "program_admin" : (list_of_program_administrators)
     }         
 
         
