@@ -32,8 +32,12 @@ from bs4 import BeautifulSoup
 def conv_to_string(list_val):
     conv_str = ""
     
+    count = 0
     for i in list_val:
-        conv_str = conv_str + " \n" + str(i) 
+        if count > 0:
+            conv_str = conv_str + " \n" + str(i) 
+        else:
+            conv_str = conv_str + str(i)
         
         
     return conv_str
@@ -512,7 +516,7 @@ def format_case_data_from_web(case_no, df_general, df_core, df_entries):
         "case_status" : status,
         "plaintiffs" : conv_to_string(list_of_plaintiffs),
         # "Sheriffs" : (list_of_sheriffs),
-        "plaintiffs_attorney" : list_of_plaintiff_attorney,
+        "plaintiffs_attorney" : conv_to_string(list_of_plaintiff_attorney),
         "latest_entries" : conv_to_string(list_of_relevant_entries),
         # "program_admin" : (list_of_program_administrators)
     }         
