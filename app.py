@@ -9,11 +9,11 @@ import test_del_court
 output = BytesIO()
 
 
-st.set_page_config(page_title="Del Data")
+st.set_page_config(page_title="Del Prop Data")
 
 
-st.header("Del Data")
-st.write("Upload your data.")
+st.header("Del Prop Data")
+st.write("Upload your formatted excel data.")
 
 
 uploaded_file=st.file_uploader("Choose a file(xlsx)",type=["xlsx"])
