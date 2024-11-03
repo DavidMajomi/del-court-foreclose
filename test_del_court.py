@@ -571,21 +571,24 @@ def get_new_web_case_data(table: pd.DataFrame):
 
 
 
+def get_complete_web_cases_as_file():
+    df = get_names_from_file_containing_cases()
+    find_abnormal_size_of_case_numbers(df)
+    clean_case_numbers(df)
+    find_abnormal_size_of_case_numbers(df)
+
+    df = get_new_web_case_data(df)
+    print(df)
+    store_non_closed_cases(df, "data.xlsx")
+
 
 # cases = search_case_matching_case_number("Linda", "Grimes", "N23L-10-013")
 
 # display_non_closed_cases(cases)
 
 
-df = get_names_from_file_containing_cases()
-find_abnormal_size_of_case_numbers(df)
-clean_case_numbers(df)
-find_abnormal_size_of_case_numbers(df)
 
-df = get_new_web_case_data(df)
-print(df)
-store_non_closed_cases(df, "data.xlsx")
-
+# get_complete_web_cases_as_file()
 
 
 # ##### Search using case id
