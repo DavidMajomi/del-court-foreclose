@@ -258,6 +258,8 @@ def find_abnormal_size_of_case_numbers(table):
         
         
     print(f"Total issues: {count}")
+    
+    return count
             
 
 def clean_case_numbers(table):
@@ -573,9 +575,9 @@ def get_new_web_case_data(table: pd.DataFrame):
 
 def get_complete_web_cases_as_file():
     df = get_names_from_file_containing_cases()
-    find_abnormal_size_of_case_numbers(df)
+    total_issues = find_abnormal_size_of_case_numbers(df)
     clean_case_numbers(df)
-    find_abnormal_size_of_case_numbers(df)
+    total_issues = find_abnormal_size_of_case_numbers(df)
 
     df = get_new_web_case_data(df)
     print(df)
