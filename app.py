@@ -4,6 +4,7 @@ import pandas as pd
 from xlsxwriter import Workbook
 from io import BytesIO
 import test_del_court
+import time
 
 
 output = BytesIO()
@@ -37,8 +38,8 @@ if submit1:
         source_data = pd.read_excel(uploaded_file, usecols=columns)
         
         
-        
-        print(source_data)
+        st.write(f"Number of rows in data: {len(source_data)}")
+        # print(source_data)
         
         test_del_court.find_abnormal_size_of_case_numbers(source_data)
         test_del_court.clean_case_numbers(source_data)
@@ -59,6 +60,8 @@ if submit1:
         
         
         st.download_button(label="Download Retrieved Data", data=xlsx_data, file_name="data.xlsx", mime="application/vnd.ms-excel")
+        time.sleep(60*60*60)
+        
         
     #st.dataframe(web_data1)
         
