@@ -292,7 +292,7 @@ if submit1:
         # print(type(xlsx_data))
         
         st.write("Here is the updated data from web source:")
-        st.write(f"Here is the number of failed searches: {num_failed_searches}")
+        st.write(f"Number of failed searches: {num_failed_searches}")
         st.write(web_data)
         st.download_button(label="Download Retrieved Data", data=xlsx_data, file_name="data.xlsx", mime="application/vnd.ms-excel")
         time.sleep(60*60)
