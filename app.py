@@ -267,14 +267,14 @@ if submit1:
         
         
         st.write(f"Number of rows in data: {len(source_data)}")
-        st.write("Here is are the relevant columns from the original data:")
+        st.write("Here are the relevant columns from the original data:")
         
         total_issues = test_del_court.find_abnormal_size_of_case_numbers(source_data)
         test_del_court.clean_case_numbers(source_data)
         total_issues = test_del_court.find_abnormal_size_of_case_numbers(source_data)
         
-        st.write(f'Here are the number of rows with unusable data: {total_issues}')
         st.write(source_data)
+        st.write(f'Number of rows with unusable data: {total_issues}')
         # print(source_data)
         
 
