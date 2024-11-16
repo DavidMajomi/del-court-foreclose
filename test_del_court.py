@@ -569,7 +569,7 @@ def get_new_web_case_data(table: pd.DataFrame):
     
     
         
-    return df
+    return df, num_fail
 
 
 
@@ -579,7 +579,7 @@ def get_complete_web_cases_as_file():
     clean_case_numbers(df)
     total_issues = find_abnormal_size_of_case_numbers(df)
 
-    df = get_new_web_case_data(df)
+    df, num_failed_searches = get_new_web_case_data(df)
     print(df)
     store_non_closed_cases(df, "data.xlsx")
 
