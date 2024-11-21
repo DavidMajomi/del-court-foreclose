@@ -128,6 +128,58 @@ def search_case_data_using_case_id(case_id):
         return None, None, None, True
         
         
+def count_num_char_for_case_no(address):
+    case_no = ""
+    
+    if "unavailableCase" in address:
+        unavailable_pos = address.find("unavailableCase:")
+        clean_addr = address[unavailable_pos + len("unavailableCase:") + 2:] # +2 to address space after unavailable case
+        
+        space_pos = clean_addr.find(' ')
+        case_no = clean_addr[:space_pos]
+        
+        # print(address)
+        # print("Cleam: ", clean_addr)
+        # print(space_pos)
+        # print(case_no)
+    
+    else:
+        
+        case_pos = address.find("Case: ")
+        new_addr = address[case_pos + len("Case: ") + 1:]
+        # case_val = new_addr
+        space_pos = new_addr.find(' ')
+        
+        case_no = new_addr[:space_pos]
+        # print("Cleam: ", new_addr)
+        # print(space_pos)
+        # print(case_no)
+        
+    
+    len_case_no = len(case_no)
+    
+    # print(case_no) 
+    
+    return len_case_no
+
+
+def conv_web_space_to_normal_space(value):
+    val_list = list(value)
+    
+    for i in range(len(val_list)):
+        if val_list[i] == ' ':
+            val_list[i] = ' '
+            pass
+        
+    final_val = ""
+    
+    for i in val_list:
+        final_val = final_val + str(i)
+        
+    
+    return final_val
+
+
 def search_case(first_name, last_name):
     # Define the URL to post the data to
     
@@ -181,13 +233,21 @@ def search_case(first_name, last_name):
                     "party_type" : list_of_vals[3],
                     "party_end_date" : list_of_vals[4],
                     "filling_date" : list_of_vals[5],
-                    "case_status" : list_of_vals[6]
+                    "case_status" : list_of_vals[6],
+                    "Case_no" : "",
+                    "Court_case" : ""
                 
                 }
             
-                # print(case_data)
+                case_data["Address"] = conv_web_space_to_normal_space(case_data["Address"])
+                
+                len_case_no = count_num_char_for_case_no(str(case_data["Address"]))
+                # print(len_case_no)
+                
+                case_data["Address"], case_data["Case_no"], case_data["Court_case"] = split_address(case_data["Address"], len_case_no)
 
                 cases.append(case_data)
+                # print(cases)
             
                 # print("\n")
         
@@ -614,3 +674,25 @@ def get_complete_web_cases_as_file():
 # display_all_cases(cases)
 
 
+
+cases = search_case("Linda", "Grimes")
+# print(cases)
+display_all_cases(cases)
+
+
+
+# unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES
+# unavailableCase:  N23L-10-013  WILMINGTON SAVINGS V. LINDA W GRIMES
+# unavailableCase:  N12L-01-133  METLIFE HOME LOANS VS LINDA W GRIMES
+# 601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES
+# 420 ROBERTS DRIVE SMYRNA DE 19977 Case:  JP12-08-003828  GJB PORTFOLIO MGMT LLC VS LINDA GRIMES
+# 601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP13-09-017201  WINDSOR FOREST VS LINDA GRIMES
+# unavailableCase:  U408-10-228  MAZDA AMERICAN CREDIT VS LINDA WALSH GRIMES
+# Case ID: @2460020
+# Name: GRIMES, LINDA W
+
+# print(count_num_char_for_case_no("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES"))
+
+# split_address("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES", count_num_char_for_case_no("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES"))
+# print(count_num_char_for_case_no("unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES"))
+# print(count_num_char_for_case_no("unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES"))
