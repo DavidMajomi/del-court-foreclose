@@ -13,46 +13,6 @@ import requests
 output = BytesIO()
 
    
-   
-def get_case_no_for_all_data(df):
-    progress_text = "Getting Case Numbers. Please wait."
-    my_bar = st.progress(0, text=progress_text)
-    
-    num_not_available = 0
-    case_numbers = []
-    
-    for i, row in df.iterrows():
-        progress =  int((i/len(df)) * 100)
-        # st.write(progress)
-        my_bar.progress(progress, text=progress_text)
-        first_name = row["Owner First Name"]
-        last_name = row["Owner Last Name"]
-        
-        # print(first_name, last_name)
-        
-        cases = test_del_court.search_case(first_name, last_name)
-        
-        if len(cases) == 0:
-            case_numbers.append("Not Available")
-            num_not_available = num_not_available + 1
-        else:
-            case_numbers.append(test_del_court.get_first_case_no_from_search(cases))
-            
-        
-        
-        # print(cases)
-        
-    my_bar.progress(100, text=progress_text)
-    
-        
-        
-    df["Case Number"] = case_numbers
-    
-    return df, num_not_available
-
-
-
-
 def search_case_data_using_case_id(case_id):
     
     get_general_info = True
@@ -300,18 +260,10 @@ if submit1:
     if uploaded_file:
         st.subheader("Processing this could take up to 20 minutes depending on file size. Please do not close or refresh this tab.")
         
-        original_data_with_no_case_data = pd.read_excel(uploaded_file)
-        st.write("Your uploaded file")
-        st.write(original_data_with_no_case_data)
-        st.write("Getting Cas Numbers")
-        table_with_case_data, num_no_case_no = get_case_no_for_all_data(original_data_with_no_case_data)
-        st.write(f"Table with retrieved case numbers:")
-        st.write(table_with_case_data)
-        st.write(f"Number of unretrieveable case number: {num_no_case_no}")
         
         columns = ["Owner Last Name", "Owner First Name", "Case Number"]
     
-        source_data = pd.read_excel(original_data_with_no_case_data, usecols=columns)
+        source_data = pd.read_excel(uploaded_file, usecols=columns)
         
         
         st.write(f"Number of rows in data: {len(source_data)}")

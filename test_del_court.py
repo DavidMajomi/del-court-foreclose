@@ -349,6 +349,17 @@ def get_names_from_file_containing_cases():
     return table
 
 
+def get_names_from_file_containing_cases_without_case_no():
+    
+    # columns = ["Owner Last Name", "Owner First Name"]
+    
+    table = pd.read_excel("PreForeclosures.xlsx")
+    # table = pd.read_excel("PreForeclosures.xlsx", usecols=columns)
+    
+    
+    return table
+
+
 def get_new_data_from_website(table: pd.DataFrame):
     
     all_cases = []
@@ -644,6 +655,43 @@ def get_complete_web_cases_as_file():
     store_non_closed_cases(df, "data.xlsx")
 
 
+def get_first_case_no_from_search(cases):
+    first_case = cases[0]
+
+    first_case_no = first_case["Case_no"]
+    
+    return first_case_no
+
+
+def get_case_no_for_all_data(df):
+    num_not_available = 0
+    case_numbers = []
+    
+    for i, row in df.iterrows():
+        first_name = row["Owner First Name"]
+        last_name = row["Owner Last Name"]
+        
+        # print(first_name, last_name)
+        
+        cases = search_case(first_name, last_name)
+        
+        if len(cases) == 0:
+            case_numbers.append("Not Available")
+            num_not_available = num_not_available + 1
+        else:
+            case_numbers.append(get_first_case_no_from_search(cases))
+            
+        
+        
+        # print(cases)
+        
+        
+    df["Case Number"] = case_numbers
+    
+    return df, num_not_available
+        
+        
+
 # cases = search_case_matching_case_number("Linda", "Grimes", "N23L-10-013")
 
 # display_non_closed_cases(cases)
@@ -654,7 +702,7 @@ def get_complete_web_cases_as_file():
 
 
 # ##### Search using case id
-# case_id = "N23L-10-013"
+# case_id = "N23L-10-013s
 # df_general, df_core, df_entries = search_case_data_using_case_id(case_id)
 
 # print(df_general
@@ -675,24 +723,19 @@ def get_complete_web_cases_as_file():
 
 
 
-cases = search_case("Linda", "Grimes")
-# print(cases)
-display_all_cases(cases)
+# cases = search_case("Linda", "Grimes")
+# # print(cases)
+# # display_all_cases(cases)
+# case_no = get_first_case_no_from_search(cases)
+# print(case_no)
 
 
 
-# unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES
-# unavailableCase:  N23L-10-013  WILMINGTON SAVINGS V. LINDA W GRIMES
-# unavailableCase:  N12L-01-133  METLIFE HOME LOANS VS LINDA W GRIMES
-# 601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES
-# 420 ROBERTS DRIVE SMYRNA DE 19977 Case:  JP12-08-003828  GJB PORTFOLIO MGMT LLC VS LINDA GRIMES
-# 601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP13-09-017201  WINDSOR FOREST VS LINDA GRIMES
-# unavailableCase:  U408-10-228  MAZDA AMERICAN CREDIT VS LINDA WALSH GRIMES
-# Case ID: @2460020
-# Name: GRIMES, LINDA W
 
-# print(count_num_char_for_case_no("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES"))
+# df = get_names_from_file_containing_cases_without_case_no()
+# print(df)
+# df, num_not_available = get_case_no_for_all_data(df)
+# print(df)
+# print(num_not_available)
+# df.to_excel("updated_case_data.xlsx")
 
-# split_address("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES", count_num_char_for_case_no("601 HELMSDALE CIRCLE NEW CASTLE DE 19720 Case:  JP12-08-005800  WINDSOR CASTLE LLC VS LINDA GRIMES"))
-# print(count_num_char_for_case_no("unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES"))
-# print(count_num_char_for_case_no("unavailableCase:  N17L-09-019  JPMORGAN CHASE BANK,   V.  LINDA W. GRIMES"))
