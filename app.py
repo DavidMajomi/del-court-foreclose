@@ -261,7 +261,8 @@ if submit1:
         
         
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
-        web_data.to_excel(writer, sheet_name='Sheet1')
+        table_with_case_data.to_excel(writer, sheet_name="Case numbers")
+        web_data.to_excel(writer, sheet_name='Web Data')
 
         writer.close()
         xlsx_data = output.getvalue()

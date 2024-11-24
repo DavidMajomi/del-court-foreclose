@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 # Find people with foreclosures
 
 
-# Evan Ward
-
 # 1:15 PM
 
 # Plaintiff (Mortgage Company) Attorney Judge Below: Last 3 Docket entries, including the date, the name of the entry and the Entry
