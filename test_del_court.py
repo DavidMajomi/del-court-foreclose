@@ -353,7 +353,7 @@ def get_names_from_file_containing_cases_without_case_no():
     
     # columns = ["Owner Last Name", "Owner First Name"]
     
-    table = pd.read_excel("PreForeclosures.xlsx")
+    table = pd.read_excel("sample.xlsx")
     # table = pd.read_excel("PreForeclosures.xlsx", usecols=columns)
     
     
@@ -378,6 +378,7 @@ def get_new_data_from_website(table: pd.DataFrame):
             
             
         else:
+            cases = []
             number_of_nan = number_of_nan + 1
             
             print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
@@ -395,7 +396,7 @@ def get_new_data_from_website(table: pd.DataFrame):
     
     
         
-    return df
+    return df, number_of_nan
         
     
 def search_case_matching_case_number(first_name, last_name, case_number):
@@ -560,8 +561,14 @@ def format_case_data_from_web(case_no, df_general, df_core, df_entries):
     list_of_plaintiff_attorney = []
 
     # print(df_core[1][2])
-    status = (df_general[2][4])
-    # print(len(df_general[0]))
+    # print(df_general)
+    
+    if len(df_general) >= 4:
+        status = (df_general[2][4])
+    else:
+        status = "Cannot Retrieve"
+        
+    
     
     for index, row in df_core.iterrows():
         if index > 0:
@@ -676,7 +683,7 @@ def get_case_no_for_all_data(df):
         cases = search_case(first_name, last_name)
         
         if len(cases) == 0:
-            case_numbers.append("Not Available")
+            case_numbers.append(None)
             num_not_available = num_not_available + 1
         else:
             case_numbers.append(get_first_case_no_from_search(cases))
@@ -725,7 +732,7 @@ def get_case_no_for_all_data(df):
 
 # cases = search_case("Linda", "Grimes")
 # # print(cases)
-# # display_all_cases(cases)
+# display_all_cases(cases)
 # case_no = get_first_case_no_from_search(cases)
 # print(case_no)
 
@@ -737,5 +744,18 @@ def get_case_no_for_all_data(df):
 # df, num_not_available = get_case_no_for_all_data(df)
 # print(df)
 # print(num_not_available)
-# df.to_excel("updated_case_data.xlsx")
+
+# total_issues = find_abnormal_size_of_case_numbers(df)
+# clean_case_numbers(df)
+# total_issues = find_abnormal_size_of_case_numbers(df)
+
+# df, num_fails = get_new_web_case_data(df)
+# print(df)
+
+
+
+
+
+
+# df.to_excel("case_data_.xlsx")
 
