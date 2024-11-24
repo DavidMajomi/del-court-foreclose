@@ -150,73 +150,6 @@ def conv_to_string(list_val):
         
         
     return conv_str        
-        
-        
-def format_case_data_from_web(case_no, df_general, df_core, df_entries):
-    # print(df_general)
-    # print(df_core)
-
-    list_of_relevant_entries = []
-    num_rows_entries, num_cols_entries = df_entries.shape
-    for index,row in df_entries.iterrows():
-        if(index >= num_rows_entries - 3):
-            list_of_relevant_entries.append(row[1])
-            
-            
-    str_relevant_entries = ""
-
-    for val in list_of_relevant_entries:
-        str_relevant_entries = str_relevant_entries + "/" + str(val)
-        
-    # print(str_relevant_entries)
-        
-        
-    list_of_plaintiffs = []
-    list_of_plaintiff_attorney = []
-    list_of_judges = []
-    list_of_sheriffs = []
-    list_of_program_administrators = []       
-    list_of_plaintiff_attorney = []
-
-    # print(df_core[1][2])
-    status = (df_general[2][4])
-    # print(len(df_general[0]))
-    
-    for index, row in df_core.iterrows():
-        if index > 0:
-            type_val = row[3]
-            name = row[5]
-            if type_val == "PLAINTIFF":
-                list_of_plaintiffs.append(row[5])
-                
-            elif type_val == "ATTORNEY FOR PLAINTIFF":
-                list_of_plaintiff_attorney.append(name)
-                
-            elif type_val == "JUDGE":
-                list_of_judges.append(name)
-                
-            # elif type_val == "SHERIFF":
-            #     list_of_sheriffs.append(name)
-                
-            # elif type_val == "PROGRAM ADMINISTRATOR":
-            #     list_of_program_administrators.append(name)
-                
-                
-                
-    gathered_data = {
-        "case_no" : case_no,
-        "case_status" : status,
-        "plaintiffs" : conv_to_string(list_of_plaintiffs),
-        # "Sheriffs" : (list_of_sheriffs),
-        "plaintiffs_attorney" : conv_to_string(list_of_plaintiff_attorney),
-        "latest_entries" : conv_to_string(list_of_relevant_entries),
-        # "program_admin" : (list_of_program_administrators)
-    }         
-
-        
-    return (gathered_data)
-    
-    
             
 
 def get_new_web_case_data(table: pd.DataFrame):
@@ -245,7 +178,7 @@ def get_new_web_case_data(table: pd.DataFrame):
             if fail == False:
                 
 
-                gathered_data = format_case_data_from_web(row["Case Number"], df_general, df_core, df_entries)
+                gathered_data = test_del_court.format_case_data_from_web(row["Case Number"], df_general, df_core, df_entries)
 
 
 
@@ -264,9 +197,6 @@ def get_new_web_case_data(table: pd.DataFrame):
         # print(f"Iteration: {i}")
         
     my_bar.progress(100, text=progress_text)
-        
-        
-        
         
     df = pd.DataFrame(list_of_gathered_data)    
     # print(f"Not a str value: {row['Case Number']} \n Number of such values: {number_of_nan}")
@@ -303,7 +233,7 @@ if submit1:
         original_data_with_no_case_data = pd.read_excel(uploaded_file)
         st.write("Your uploaded file")
         st.write(original_data_with_no_case_data)
-        st.write("Getting Cas Numbers")
+        st.write("Getting Case Numbers")
         table_with_case_data, num_no_case_no = get_case_no_for_all_data(original_data_with_no_case_data)
         st.write(f"Table with retrieved case numbers:")
         st.write(table_with_case_data)
@@ -311,7 +241,8 @@ if submit1:
         
         columns = ["Owner Last Name", "Owner First Name", "Case Number"]
     
-        source_data = pd.read_excel(original_data_with_no_case_data, usecols=columns)
+        # source_data = pd.read_excel(original_data_with_no_case_data, usecols=columns)
+        source_data = table_with_case_data[columns]
         
         
         st.write(f"Number of rows in data: {len(source_data)}")
@@ -322,8 +253,7 @@ if submit1:
         total_issues = test_del_court.find_abnormal_size_of_case_numbers(source_data)
         
         st.write(source_data)
-        st.write(f'Number of rows with unusable data: {total_issues}')
-        # print(source_data)
+        st.write(f'Number of rows with case number length not = 11: {total_issues}')
         
 
         web_data, num_failed_searches = get_new_web_case_data(source_data)
@@ -336,8 +266,6 @@ if submit1:
         writer.close()
         xlsx_data = output.getvalue()
 
-        # print(xlsx_data)
-        # print(type(xlsx_data))
         
         st.write("Here is the updated data from web source:")
         st.write(f"Number of failed searches: {num_failed_searches}")
