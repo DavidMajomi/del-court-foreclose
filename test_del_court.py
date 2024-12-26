@@ -772,15 +772,15 @@ def get_case_no_for_all_data(df):
 
 
 
-cases = search_case("Linda", "Grimes")
-cases_two = search_case("Linda", "Grimes")
+# cases = search_case("Linda", "Grimes")
+# cases_two = search_case("Linda", "Grimes")
 
-# print(cases)
-display_all_cases(cases)
-case_no = get_first_case_no_from_search(cases)
-print(case_no)
-case_no = get_filtered_case_no(cases_two)
-print(case_no)
+# # print(cases)
+# display_all_cases(cases)
+# case_no = get_first_case_no_from_search(cases)
+# print(case_no)
+# case_no = get_filtered_case_no(cases_two)
+# print(case_no)
 
 
 
