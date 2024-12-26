@@ -2,6 +2,7 @@ import time
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+from dateutil import parser
 
 
 
@@ -668,6 +669,49 @@ def get_first_case_no_from_search(cases):
     return first_case_no
 
 
+def get_first_case_with_n_or_k(cases):
+    
+    for case in cases:
+        temp_case_no = case["Case_no"]
+        temp_filling_date = parser.parse(case["filling_date"])
+        
+        if temp_case_no[0] == 'K' or temp_case_no[0] == 'N':
+            return case
+        
+    return None
+            
+
+def get_filtered_case_no(cases):
+    valid_case_no = None
+    
+    valid_case_with_most_recent_filling_date = get_first_case_with_n_or_k(cases)
+    
+    if valid_case_with_most_recent_filling_date is None:
+        valid_case_with_most_recent_filling_date = cases[0]
+    
+    for case in cases:
+        most_recent_filling_date = parser.parse(valid_case_with_most_recent_filling_date["filling_date"])
+        
+        temp_case_no = case["Case_no"]
+        temp_filling_date = parser.parse(case["filling_date"])
+        
+        if temp_case_no[0] == 'K' or temp_case_no[0] == 'N':
+            
+            if temp_filling_date > most_recent_filling_date:
+                valid_case_with_most_recent_filling_date = case
+            
+            
+    valid_case_no = valid_case_with_most_recent_filling_date["Case_no"]
+    
+    if valid_case_no[0] == 'K' or valid_case_no[0] == 'N':
+        valid_case_no = valid_case_no
+    else:
+        valid_case_no = "Not Valid"
+        
+    
+    return valid_case_no
+
+
 def get_case_no_for_all_data(df):
     num_not_available = 0
     case_numbers = []
@@ -728,12 +772,15 @@ def get_case_no_for_all_data(df):
 
 
 
-# cases = search_case("Linda", "Grimes")
-# # print(cases)
-# display_all_cases(cases)
-# case_no = get_first_case_no_from_search(cases)
-# print(case_no)
+cases = search_case("Linda", "Grimes")
+cases_two = search_case("Linda", "Grimes")
 
+# print(cases)
+display_all_cases(cases)
+case_no = get_first_case_no_from_search(cases)
+print(case_no)
+case_no = get_filtered_case_no(cases_two)
+print(case_no)
 
 
 

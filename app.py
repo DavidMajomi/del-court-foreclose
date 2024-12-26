@@ -36,7 +36,7 @@ def get_case_no_for_all_data(df):
             case_numbers.append("Not Available")
             num_not_available = num_not_available + 1
         else:
-            case_numbers.append(test_del_court.get_first_case_no_from_search(cases))
+            case_numbers.append(test_del_court.get_filtered_case_no(cases))
             
         
         
@@ -49,8 +49,6 @@ def get_case_no_for_all_data(df):
     df["Case Number"] = case_numbers
     
     return df, num_not_available
-
-
 
 
 def search_case_data_using_case_id(case_id):
